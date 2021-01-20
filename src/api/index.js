@@ -7,7 +7,6 @@ export function getPeopleList () {
 }
 
 export function getData (url) {
-  console.log('API', url);
   return axios.get(encodeURI(url));
 }
 

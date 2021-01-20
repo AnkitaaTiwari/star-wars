@@ -1,32 +1,42 @@
 import React, { useEffect } from 'react';
-import { Grid } from '@material-ui/core';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { Select, MenuItem } from '@material-ui/core';
-import useStyles from './styles';
+import { Typography, Grid, Box } from '@material-ui/core';
 
-function CharacterInfo({ character, movieList, msg, isLoading }) {
-  const classes = useStyles();
+function CharacterInfo({ character, movieList, errorMessage, isLoading }) {
 
   console.log('character', character);
   console.log('movieListmovieList', movieList);
 
-  if(!!msg) {
+  if(!!errorMessage) {
     return (
-      <div>{msg}</div>
+      <Typography color="error" align="center">{errorMessage}</Typography>
     );
   }
 
-  // if(!peopleList || peopleList?.results?.length === 0) {
-  //   return (
-  //     <div>NO PEOPLE LIST FOUND.</div>
-  //   );
-  // }
+  if(Object.keys(character).length === 0 && character.constructor === Object) {
+    return (
+      <Typography color="primary" align="center">Please select a character</Typography>
+    );
+  }
+
+  const lastMovie = movieList?.[movieList.length - 1]?.data;
   
   return (
-    <div className={classes.content}>
-      character
-    </div>
+    <Box my={5} display="flex" flexDirection="column">
+      <Box mb={3} display="flex">
+        <Typography variant="body1">
+          The last time {character.name} was in a movie was in {lastMovie.title} in the year {lastMovie.release_date.substring(0, 4)}
+        </Typography>
+      </Box>
+      <Grid container>
+        {movieList.map(movie => (
+          <Grid item sm={6}>
+            {movie?.data?.title}
+          </Grid>
+        ))}
+      </Grid>
+    </Box>
   )
 }
 
@@ -38,7 +48,7 @@ CharacterInfo.propTypes = {
     release_date: PropTypes.string,
     title: PropTypes.string,
   }),
-  message: PropTypes.string,
+  errorMessage: PropTypes.string,
   isLoading: PropTypes.bool,
 }
 
@@ -46,7 +56,7 @@ const mapStateToProps = (state) => {
   return {
     character: state.characterReducer.character,
     movieList: state.characterReducer.movieList,
-    msg: state.peopleListReducer.msg,
+    errorMessage: state.peopleListReducer.msg,
     isLoading: state.peopleListReducer.isLoading,
   };
 };

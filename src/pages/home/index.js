@@ -1,56 +1,53 @@
-import React, { useEffect } from 'react';
-import { Grid } from '@material-ui/core';
+import React, { useState, useEffect } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { Select, MenuItem } from '@material-ui/core';
+import { Box, Select, MenuItem, Typography } from '@material-ui/core';
 
 import CharacterInfo from '../../containers/characterInfo';
 import { fetchCharacterAction } from '../../actions/characterActions';
 import { fetchPeopleListAction } from '../../actions/peopleListActions';
-import useStyles from './styles';
 
-function Home({ fetchPeopleList, fetchCharacter, peopleList, msg }) {
-  const classes = useStyles();
+function Home({ fetchPeopleList, fetchCharacter, peopleList, errorMessage, isLoading }) {
 
+  const [ currentCharacter, setCurrentCharacter ] = useState('')
   useEffect(() => {
     fetchPeopleList();
   }, [ fetchPeopleList ]);
 
   function handleChange(e) {
-    fetchCharacter(e?.target?.value?.url);
+    setCurrentCharacter(e?.target?.value);
+    fetchCharacter(e?.target?.value);
   }
 
-  if(!!msg) {
+  if(!!errorMessage) {
     return (
-      <div>{msg}</div>
+      <Typography color="error" align="center">{errorMessage}</Typography>
     );
   }
 
   if(!peopleList || peopleList?.results?.length === 0) {
     return (
-      <div>NO PEOPLE LIST FOUND.</div>
+      <Typography color="error" align="center">People list not found.</Typography>
     );
   }
   
   return (
-    <div className={classes.content}>
-      <Grid container className={classes.gridContainer}>
-        <Grid item xs={12} sm={4}>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            value={''}
-            onChange={handleChange}
-          >
-            {peopleList?.results?.map((option, key) => (
-              <MenuItem key={key} value={option}>{option?.name}</MenuItem>
-            ))}
-          </Select>
-          <CharacterInfo />
-        </Grid>
-      </Grid>
-    </div>
+    <Box  mx={10} display="flex" flexDirection="column" justifyContent="center">
+      <Box mx={20} display="flex" flexDirection="column">
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          value={currentCharacter}
+          onChange={handleChange}
+        >
+          {peopleList?.results?.map((option, key) => (
+            <MenuItem key={key} value={option?.url}>{option?.name}</MenuItem>
+          ))}
+        </Select>
+      </Box>
+      <CharacterInfo />
+    </Box>
   )
 }
 
@@ -58,7 +55,7 @@ Home.propTypes = {
   peopleList: PropTypes.shape({
     results: PropTypes.array,
   }),
-  message: PropTypes.string,
+  errorMessage: PropTypes.string,
   isLoading: PropTypes.bool,
   fetchPeopleList: PropTypes.func,
   fetchCharacter: PropTypes.func,
@@ -67,7 +64,7 @@ Home.propTypes = {
 const mapStateToProps = (state) => {
   return {
     peopleList: state.peopleListReducer.peopleList,
-    msg: state.peopleListReducer.msg,
+    errorMessage: state.peopleListReducer.msg,
     isLoading: state.peopleListReducer.isLoading,
   };
 };

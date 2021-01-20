@@ -1,57 +1,68 @@
-import React, { useEffect } from 'react';
-import { Grid } from '@material-ui/core';
+import React, { useState, useEffect } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { Select, MenuItem } from '@material-ui/core';
+import { useTheme } from '@material-ui/core/styles';
+import { Box, Select, MenuItem, Typography, CircularProgress, useMediaQuery  } from '@material-ui/core';
 
+import CharacterInfo from '../../containers/characterInfo';
 import { fetchCharacterAction } from '../../actions/characterActions';
 import { fetchPeopleListAction } from '../../actions/peopleListActions';
-import useStyles from './styles';
 
-function Home({ fetchPeopleList, fetchPeople, peopleList, msg }) {
-  const classes = useStyles();
+function Home({ fetchPeopleList, fetchCharacter, peopleList, errorMessage, isLoading }) {
 
-  console.log('peopleList', peopleList);
-
+  const theme = useTheme();
+  const matches = useMediaQuery(theme.breakpoints.up('sm'));
+  const [ currentCharacter, setCurrentCharacter ] = useState('')
   useEffect(() => {
-    console.log('in use effect');
     fetchPeopleList();
   }, [ fetchPeopleList ]);
 
-  function handleChange() {
-    fetchCharacterAction();
+  function handleChange(e) {
+    setCurrentCharacter(e?.target?.value);
+    fetchCharacter(e?.target?.value);
   }
 
-  if(!!msg) {
+  if(!!errorMessage) {
     return (
-      <div>{msg}</div>
+      <Box display="flex" justifyContent="center">
+        <Typography color="error" align="center">{errorMessage}</Typography>
+      </Box>
     );
   }
 
   if(!peopleList || peopleList?.results?.length === 0) {
     return (
-      <div>NO PEOPLE LIST FOUND.</div>
+      <Box display="flex" justifyContent="center">
+        <Typography color="error" align="center">People list not found.</Typography>
+      </Box>
+    );
+  }
+
+  if(isLoading) {
+    return (
+      <Box mt={10} display="flex" justifyContent="center">
+        <CircularProgress />
+      </Box>
     );
   }
   
   return (
-    <div className={classes.content}>
-      <Grid container className={classes.gridContainer}>
-        <Grid item xs={12} sm={4}>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            value={''}
-            onChange={handleChange}
-          >
-            {peopleList?.results?.map((option, key) => (
-              <MenuItem key={key} value={option}>{option?.name}</MenuItem>
-            ))}
-          </Select>
-        </Grid>
-      </Grid>
-    </div>
+    <Box display="flex" flexDirection="column" justifyContent="center">
+      <Box mx={matches ? 25 : 5}  display="flex" flexDirection="column">
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          value={currentCharacter}
+          onChange={handleChange}
+        >
+          {peopleList?.results?.map((option, key) => (
+            <MenuItem key={key} value={option?.url}>{option?.name}</MenuItem>
+          ))}
+        </Select>
+      </Box>
+      <CharacterInfo />
+    </Box>
   )
 }
 
@@ -59,16 +70,16 @@ Home.propTypes = {
   peopleList: PropTypes.shape({
     results: PropTypes.array,
   }),
-  message: PropTypes.string,
+  errorMessage: PropTypes.string,
   isLoading: PropTypes.bool,
   fetchPeopleList: PropTypes.func,
-  fetchPeople: PropTypes.func,
+  fetchCharacter: PropTypes.func,
 }
 
 const mapStateToProps = (state) => {
   return {
     peopleList: state.peopleListReducer.peopleList,
-    msg: state.peopleListReducer.msg,
+    errorMessage: state.peopleListReducer.msg,
     isLoading: state.peopleListReducer.isLoading,
   };
 };
@@ -76,7 +87,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return bindActionCreators({
     fetchPeopleList: fetchPeopleListAction,
-    fetchPeople: fetchCharacterAction,
+    fetchCharacter: fetchCharacterAction,
   }, dispatch);
 };
 

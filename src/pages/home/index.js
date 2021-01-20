@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { Box, Select, MenuItem, Typography, CircularProgress } from '@material-ui/core';
+import { useTheme } from '@material-ui/core/styles';
+import { Box, Select, MenuItem, Typography, CircularProgress, useMediaQuery  } from '@material-ui/core';
 
 import CharacterInfo from '../../containers/characterInfo';
 import { fetchCharacterAction } from '../../actions/characterActions';
@@ -10,6 +11,8 @@ import { fetchPeopleListAction } from '../../actions/peopleListActions';
 
 function Home({ fetchPeopleList, fetchCharacter, peopleList, errorMessage, isLoading }) {
 
+  const theme = useTheme();
+  const matches = useMediaQuery(theme.breakpoints.up('sm'));
   const [ currentCharacter, setCurrentCharacter ] = useState('')
   useEffect(() => {
     fetchPeopleList();
@@ -45,8 +48,8 @@ function Home({ fetchPeopleList, fetchCharacter, peopleList, errorMessage, isLoa
   }
   
   return (
-    <Box mx={10} display="flex" flexDirection="column" justifyContent="center">
-      <Box mx={20} display="flex" flexDirection="column">
+    <Box display="flex" flexDirection="column" justifyContent="center">
+      <Box mx={matches ? 25 : 5}  display="flex" flexDirection="column">
         <Select
           labelId="demo-simple-select-label"
           id="demo-simple-select"

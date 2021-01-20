@@ -1,9 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { Typography, Grid, Box, CircularProgress } from '@material-ui/core';
+import { Typography, Grid, Box, CircularProgress, Card } from '@material-ui/core';
+import useStyles from './styles';
+
 
 function CharacterInfo({ character, movieList, errorMessage, isLoading }) {
+  const classes = useStyles();
 
   if(!!errorMessage) {
     return (
@@ -35,15 +38,17 @@ function CharacterInfo({ character, movieList, errorMessage, isLoading }) {
         </Typography>
       </Box>
       <Box mb={1} display="flex" justifyContent="center">
-        <Typography variant="h5">
+        <Typography className={classes.heading} variant="h5" color="primary">
           List of Movies
         </Typography>
       </Box>
-      <Grid container>
+      <Grid className={classes.gridContainer} container>
         {movieList.map(movie => (
           <Grid item sm={6}>
             <Box mb={1} display="flex" justifyContent="center">
-              {movie?.data?.title}
+              <Card className={classes.content} variant="outlined">
+                {movie?.data?.title}
+              </Card>
             </Box>
           </Grid>
         ))}

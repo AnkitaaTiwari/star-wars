@@ -3,6 +3,7 @@ import { FETCH_CHARACTER, FETCH_CHARACTER_SUCCESS, FETCH_CHARACTER_FAILURE } fro
 const initialState = {
   isLoading: false,
   character: {},
+  movieList: {},
   msg: '',
 };
 
@@ -20,6 +21,7 @@ export default function characterReducer(state = initialState, action) {
         ...state,
         isLoading: false,
         character: action.character,
+        movieList: action.movieList,
       }
     case FETCH_CHARACTER_FAILURE:
       return {

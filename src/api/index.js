@@ -1,6 +1,13 @@
 import axios from 'axios';
 
-export function getPeopleList (param) {
-  console.log('A{PI');
-  return axios.get(encodeURI('https://swapi.dev/api/people'));
+const PEOPLE_LIST_API = 'https://swapi.dev/api/people';
+
+export function getPeopleList () {
+  return axios.get(encodeURI(PEOPLE_LIST_API));
 }
+
+export function getData (url) {
+  console.log('API', url);
+  return axios.get(encodeURI(url));
+}
+

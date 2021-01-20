@@ -5,22 +5,20 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Select, MenuItem } from '@material-ui/core';
 
+import CharacterInfo from '../../containers/characterInfo';
 import { fetchCharacterAction } from '../../actions/characterActions';
 import { fetchPeopleListAction } from '../../actions/peopleListActions';
 import useStyles from './styles';
 
-function Home({ fetchPeopleList, fetchPeople, peopleList, msg }) {
+function Home({ fetchPeopleList, fetchCharacter, peopleList, msg }) {
   const classes = useStyles();
 
-  console.log('peopleList', peopleList);
-
   useEffect(() => {
-    console.log('in use effect');
     fetchPeopleList();
   }, [ fetchPeopleList ]);
 
-  function handleChange() {
-    fetchCharacterAction();
+  function handleChange(e) {
+    fetchCharacter(e?.target?.value?.url);
   }
 
   if(!!msg) {
@@ -49,6 +47,7 @@ function Home({ fetchPeopleList, fetchPeople, peopleList, msg }) {
               <MenuItem key={key} value={option}>{option?.name}</MenuItem>
             ))}
           </Select>
+          <CharacterInfo />
         </Grid>
       </Grid>
     </div>
@@ -62,7 +61,7 @@ Home.propTypes = {
   message: PropTypes.string,
   isLoading: PropTypes.bool,
   fetchPeopleList: PropTypes.func,
-  fetchPeople: PropTypes.func,
+  fetchCharacter: PropTypes.func,
 }
 
 const mapStateToProps = (state) => {
@@ -76,7 +75,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return bindActionCreators({
     fetchPeopleList: fetchPeopleListAction,
-    fetchPeople: fetchCharacterAction,
+    fetchCharacter: fetchCharacterAction,
   }, dispatch);
 };
 

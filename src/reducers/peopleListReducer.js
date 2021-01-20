@@ -7,7 +7,7 @@ const initialState = {
 };
 
 export default function peopleListReducer(state = initialState, action) {
-  console.log(action, '**********', state);
+  // console.log(action, '**********', state);
   switch(action.type) {
     case FETCH_PEOPLE_LIST: 
       return {

@@ -5,7 +5,7 @@ import { Box, Typography } from '@material-ui/core';
 
 function Layout({ children }) {
   return (
-    <Box display="flex" flexDirection="column" justifyContent="center">
+    <Box mt={2} display="flex" flexDirection="column" justifyContent="center">
       <Typography variant="h4" align="center">
           <Link to='/'>
             Star Wars

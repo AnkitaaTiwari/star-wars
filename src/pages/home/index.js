@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { Box, Select, MenuItem, Typography } from '@material-ui/core';
+import { Box, Select, MenuItem, Typography, CircularProgress } from '@material-ui/core';
 
 import CharacterInfo from '../../containers/characterInfo';
 import { fetchCharacterAction } from '../../actions/characterActions';
@@ -22,18 +22,30 @@ function Home({ fetchPeopleList, fetchCharacter, peopleList, errorMessage, isLoa
 
   if(!!errorMessage) {
     return (
-      <Typography color="error" align="center">{errorMessage}</Typography>
+      <Box display="flex" justifyContent="center">
+        <Typography color="error" align="center">{errorMessage}</Typography>
+      </Box>
     );
   }
 
   if(!peopleList || peopleList?.results?.length === 0) {
     return (
-      <Typography color="error" align="center">People list not found.</Typography>
+      <Box display="flex" justifyContent="center">
+        <Typography color="error" align="center">People list not found.</Typography>
+      </Box>
+    );
+  }
+
+  if(isLoading) {
+    return (
+      <Box mt={10} display="flex" justifyContent="center">
+        <CircularProgress />
+      </Box>
     );
   }
   
   return (
-    <Box  mx={10} display="flex" flexDirection="column" justifyContent="center">
+    <Box mx={10} display="flex" flexDirection="column" justifyContent="center">
       <Box mx={20} display="flex" flexDirection="column">
         <Select
           labelId="demo-simple-select-label"

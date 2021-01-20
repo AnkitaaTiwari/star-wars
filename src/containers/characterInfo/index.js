@@ -1,12 +1,9 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { Typography, Grid, Box } from '@material-ui/core';
+import { Typography, Grid, Box, CircularProgress } from '@material-ui/core';
 
 function CharacterInfo({ character, movieList, errorMessage, isLoading }) {
-
-  console.log('character', character);
-  console.log('movieListmovieList', movieList);
 
   if(!!errorMessage) {
     return (
@@ -20,19 +17,34 @@ function CharacterInfo({ character, movieList, errorMessage, isLoading }) {
     );
   }
 
+  if(isLoading) {
+    return (
+      <Box mt={10} display="flex" justifyContent="center">
+        <CircularProgress />
+      </Box>
+    );
+  }
+
   const lastMovie = movieList?.[movieList.length - 1]?.data;
   
   return (
     <Box my={5} display="flex" flexDirection="column">
-      <Box mb={3} display="flex">
+      <Box mb={3} display="flex" justifyContent="center">
         <Typography variant="body1">
           The last time {character.name} was in a movie was in {lastMovie.title} in the year {lastMovie.release_date.substring(0, 4)}
+        </Typography>
+      </Box>
+      <Box mb={1} display="flex" justifyContent="center">
+        <Typography variant="h5">
+          List of Movies
         </Typography>
       </Box>
       <Grid container>
         {movieList.map(movie => (
           <Grid item sm={6}>
-            {movie?.data?.title}
+            <Box mb={1} display="flex" justifyContent="center">
+              {movie?.data?.title}
+            </Box>
           </Grid>
         ))}
       </Grid>
@@ -56,8 +68,8 @@ const mapStateToProps = (state) => {
   return {
     character: state.characterReducer.character,
     movieList: state.characterReducer.movieList,
-    errorMessage: state.peopleListReducer.msg,
-    isLoading: state.peopleListReducer.isLoading,
+    errorMessage: state.characterReducer.msg,
+    isLoading: state.characterReducer.isLoading,
   };
 };
 
